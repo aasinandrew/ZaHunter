@@ -23,6 +23,7 @@
 @property NSMutableArray *annotationsArray;
 @property int whatIndexNeedsToBeAdded;
 @property NSMutableArray *sortedFullPizzas;
+@property BOOL isWalking;
 
 @end
 
@@ -39,6 +40,7 @@
     self.annotationsArray = [[NSMutableArray alloc] init];
     self.whatIndexNeedsToBeAdded = 4;
     self.sortedFullPizzas = [[NSMutableArray alloc]init];
+    self.isWalking = YES;
 }
 
 
@@ -94,23 +96,31 @@
             [self.annotationsArray addObject:annotation];
             
             [self.mapView addAnnotation:annotation];
-            if (i == 0) {
+            if (i == 0 && self.isWalking) {
             
-                [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera];
-            } else {
+                  [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeWalking];
+            
+            } else if (i == 0 && !self.isWalking) {
+                [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeAutomobile];
+            } else if (i > 0 && self.isWalking){
                 Pizzeria *pizzeriaPrevious = [sorted objectAtIndex:i-1];
-                [self getTotalTimeToPizzeria:pizzeriaPrevious.mapItem destinationPizzeria:pizzera];
+       
+                [self getTotalTimeToPizzeria:pizzeriaPrevious.mapItem destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeWalking];
+            } else  {
+                Pizzeria *pizzeriaPrevious = [sorted objectAtIndex:i-1];
+                
+                [self getTotalTimeToPizzeria:pizzeriaPrevious.mapItem destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeAutomobile];
             }
         }
     }
     
 }
 
--(void)getTotalTimeToPizzeria: (MKMapItem *)mapItem destinationPizzeria: (Pizzeria *)pizzeria {
+-(void)getTotalTimeToPizzeria: (MKMapItem *)mapItem destinationPizzeria: (Pizzeria *)pizzeria transportType: (MKDirectionsTransportType)type {
     MKDirectionsRequest *request = [MKDirectionsRequest new];
     request.source = mapItem;
     request.destination = pizzeria.mapItem;
-    request.transportType = MKDirectionsTransportTypeWalking;
+    request.transportType = type;
     request.requestsAlternateRoutes = NO;
     
     MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
@@ -160,14 +170,7 @@
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    int totalDuration = 0;
-    
-  
-    for (Pizzeria *pizzeria in self.sortedPizzaShops) {
-            totalDuration += pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent;
-    }
-    
-    totalDuration = totalDuration /60;
+    int totalDuration = [self calculatingTotalDuration];
     if (section == 0) {
         
         CGRect footerFrame = [tableView rectForFooterInSection:0];
@@ -186,6 +189,17 @@
     
     
 }
+-(int) calculatingTotalDuration {
+    int totalDuration = 0;
+    
+    
+    for (Pizzeria *pizzeria in self.sortedPizzaShops) {
+        totalDuration += pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent;
+    }
+    
+    totalDuration = totalDuration /60;
+    return totalDuration;
+}
 
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
@@ -200,9 +214,8 @@
     [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObjects:indexPathInterest, nil] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.tableView endUpdates];
     self.whatIndexNeedsToBeAdded++;
-//    [self.tableView reloadData];
-//    
-    
+
+
 }
 
 
@@ -247,9 +260,22 @@
 
 
 
+- (IBAction)walkOrDrivePressed:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        self.isWalking = YES;
+        [self.tableView reloadData];
+    } else {
+        self.isWalking = NO;
+         [self.tableView reloadData];
+    }
+    
+}
 
 
 - (IBAction)getRoutePressed:(UIButton *)sender {
+  
+    
+    
 }
 - (IBAction)listOrMapPressed:(UISegmentedControl *)sender {
     if (sender.selectedSegmentIndex == 0) {
