@@ -26,7 +26,7 @@
 }
 
 -(void)showPizzeriaAnnotation {
-
+  //technically we didn't need to make it the custome Pizzeria ANnotations since the user Location MK is a class 
     PizzeriaAnnotation *annotation = [PizzeriaAnnotation new];
     annotation.coordinate = self.pizzeria.mapItem.placemark.location.coordinate;
     annotation.title = self.pizzeria.name;
@@ -39,11 +39,11 @@
 #pragma mark - Map Delegate
 -(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
     MKAnnotationView *pin = [MKAnnotationView new];
-    if ([annotation isKindOfClass:[PizzeriaAnnotation class]]) {
-      
-        pin.image = [UIImage imageNamed:@"pizza"];
+    if ([annotation isKindOfClass:[MKUserLocation class]]) {
+        return nil;
+        
     } else {
-        pin.image = [UIImage imageNamed:@"currentLocation"];
+        pin.image = [UIImage imageNamed:@"pizza"];
     }
 
     

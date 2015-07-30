@@ -21,7 +21,8 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *getRouteButton;
 @property NSMutableArray *annotationsArray;
-
+@property int whatIndexNeedsToBeAdded;
+@property NSMutableArray *sortedFullPizzas;
 
 @end
 
@@ -36,6 +37,8 @@
     self.sortedPizzaShops = [[NSMutableArray alloc] init];
     self.mapView.hidden = YES;
     self.annotationsArray = [[NSMutableArray alloc] init];
+    self.whatIndexNeedsToBeAdded = 4;
+    self.sortedFullPizzas = [[NSMutableArray alloc]init];
 }
 
 
@@ -79,10 +82,11 @@
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc]initWithKey:@"distance" ascending:YES];
     NSArray *sortDescriptors = [NSArray arrayWithObject:sortDescriptor];
     NSArray *sorted = [self.pizzaShops sortedArrayUsingDescriptors:sortDescriptors];
+    self.sortedFullPizzas = [sorted mutableCopy];
     for (int i=0; i<4; i++) {
-        Pizzeria *pizzera = [sorted objectAtIndex:i];
+        Pizzeria *pizzera = [self.sortedFullPizzas objectAtIndex:i];
         if (pizzera.distance < 10000) {
-            [self.sortedPizzaShops addObject:sorted[i]];
+            [self.sortedPizzaShops addObject:self.sortedFullPizzas[i]];
             PizzeriaAnnotation *annotation = [PizzeriaAnnotation new];
             annotation.coordinate = pizzera.mapItem.placemark.location.coordinate;
             annotation.title = pizzera.name;
@@ -157,6 +161,8 @@
 
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     int totalDuration = 0;
+    
+  
     for (Pizzeria *pizzeria in self.sortedPizzaShops) {
             totalDuration += pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent;
     }
@@ -180,6 +186,26 @@
     
     
 }
+
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.sortedPizzaShops removeObjectAtIndex:indexPath.row];
+    NSIndexPath *indexPathInterest = [NSIndexPath indexPathForRow:3 inSection:0];
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.sortedPizzaShops insertObject:self.sortedFullPizzas[self.whatIndexNeedsToBeAdded] atIndex:3];
+    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObjects:indexPathInterest, nil] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
+    self.whatIndexNeedsToBeAdded++;
+//    [self.tableView reloadData];
+//    
+    
+}
+
+
 
 #pragma mark - Map Delegate 
 -(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
