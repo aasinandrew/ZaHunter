@@ -96,22 +96,20 @@
             [self.annotationsArray addObject:annotation];
             
             [self.mapView addAnnotation:annotation];
-            if (i == 0 && self.isWalking) {
+            if (i == 0 ) {
             
-                  [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeWalking];
+                [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeWalking];
             
-            } else if (i == 0 && !self.isWalking) {
                 [self getTotalTimeToPizzeria:[MKMapItem mapItemForCurrentLocation] destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeAutomobile];
-            } else if (i > 0 && self.isWalking){
+            } else {
                 Pizzeria *pizzeriaPrevious = [sorted objectAtIndex:i-1];
        
                 [self getTotalTimeToPizzeria:pizzeriaPrevious.mapItem destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeWalking];
-            } else  {
-                Pizzeria *pizzeriaPrevious = [sorted objectAtIndex:i-1];
                 
                 [self getTotalTimeToPizzeria:pizzeriaPrevious.mapItem destinationPizzeria:pizzera transportType:MKDirectionsTransportTypeAutomobile];
             }
         }
+        
     }
     
 }
@@ -123,11 +121,21 @@
     request.transportType = type;
     request.requestsAlternateRoutes = NO;
     
-    MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
-    [directions calculateETAWithCompletionHandler:^(MKETAResponse *response, NSError *error) {
-        pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent = response.expectedTravelTime + 3000;
-        [self.tableView reloadData];
-    }];
+    if (type == MKDirectionsTransportTypeWalking) {
+        MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
+        [directions calculateETAWithCompletionHandler:^(MKETAResponse *response, NSError *error) {
+            pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent = response.expectedTravelTime + 3000;
+            [self.tableView reloadData];
+        }];
+    } else {
+        MKDirections *directions = [[MKDirections alloc] initWithRequest:request];
+        [directions calculateETAWithCompletionHandler:^(MKETAResponse *response, NSError *error) {
+            pizzeria.drivingDuration = response.expectedTravelTime + 3000;
+            [self.tableView reloadData];
+        }];
+    }
+    
+  
     
 }
 -(void)getRouteToPizzeria: (Pizzeria *)pizzeria {
@@ -192,10 +200,17 @@
 -(int) calculatingTotalDuration {
     int totalDuration = 0;
     
-    
-    for (Pizzeria *pizzeria in self.sortedPizzaShops) {
-        totalDuration += pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent;
+    if (self.isWalking) {
+
+        for (Pizzeria *pizzeria in self.sortedPizzaShops) {
+            totalDuration += pizzeria.walkingDurationFromPreviousLocationPlusTimeSpent;
+        }
+    }else {
+        for (Pizzeria *pizzeria in self.sortedPizzaShops) {
+            totalDuration += pizzeria.drivingDuration;
+        }
     }
+    
     
     totalDuration = totalDuration /60;
     return totalDuration;

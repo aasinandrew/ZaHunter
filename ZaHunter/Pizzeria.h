@@ -16,6 +16,7 @@
 @property double distance;
 @property MKRoute *route; 
 @property double walkingDurationFromPreviousLocationPlusTimeSpent;
+@property double drivingDuration;
 
 
 @end
