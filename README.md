@@ -1,2 +1,2 @@
 # ZaHunter
-![ScreenShot](https://http://i.imgur.com/zETDOps.png)
+![ScreenShot](http://i.imgur.com/zETDOps.png)
