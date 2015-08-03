@@ -31,6 +31,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     // Do any additional setup after loading the view.
     [self getUserCurrentLocation];
     
@@ -172,8 +173,8 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     Pizzeria *pizzeria = [self.sortedPizzaShops objectAtIndex:indexPath.row];
     cell.textLabel.text = pizzeria.name;
-    double metersToKM = pizzeria.distance / 1000;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"%fKM", metersToKM];
+    double metersToKM = pizzeria.distance * 0.00062137;
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2f Miles", metersToKM];
     return cell;
 }
 
@@ -185,8 +186,14 @@
         CGRect labelFrame = CGRectMake(20, 20, footerFrame.size.width - 40, footerFrame.size.height - 40);
         
         UILabel *label = [[UILabel alloc] initWithFrame:labelFrame];
-        label.text = [NSString stringWithFormat:@"Total Walking Duration: %i Minutes",totalDuration];
-        
+
+        if (self.isWalking) {
+            label.text = [NSString stringWithFormat:@"Total Walking Duration: %i Minutes",totalDuration];
+        }
+        else {
+            label.text = [NSString stringWithFormat:@"Total Driving Duration: %i Minutes",totalDuration];
+        }
+
         UIView *view = [[UIView alloc] initWithFrame:footerFrame];
         [view addSubview:label];
         
@@ -238,16 +245,21 @@
 #pragma mark - Map Delegate 
 -(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
     MKAnnotationView *pin = [MKAnnotationView new];
-    if (annotation.title) {
-        
+
+    if ([annotation isKindOfClass:[MKUserLocation class]]) {
+        //pin.image = [UIImage imageNamed:@"currentLocation"];
+        return nil;
+    }
+    else if (annotation.title) {
         pin.image = [UIImage imageNamed:@"pizza"];
         pin.canShowCallout = YES;
         pin.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeInfoDark];
-    
-    } else {
-        pin.image = [UIImage imageNamed:@"currentLocation"];
     }
-    
+//    } else if ([annotation isKindOfClass:[MKUserLocation class]]) {
+//        //pin.image = [UIImage imageNamed:@"currentLocation"];
+//        return nil;
+//    }
+
     return pin;
 }
 
@@ -288,7 +300,23 @@
 
 
 - (IBAction)getRoutePressed:(UIButton *)sender {
-  
+    MKDirectionsRequest *request = [MKDirectionsRequest new];
+    request.source = [MKMapItem mapItemForCurrentLocation];
+    Pizzeria *pizzeria = [self.sortedPizzaShops objectAtIndex:[self.tableView indexPathForSelectedRow].row];
+    request.destination = pizzeria.mapItem;
+
+    MKDirections *directions = [[MKDirections alloc]initWithRequest:request];
+    [directions calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
+        NSArray *routes = response.routes;
+        MKRoute *route = routes.firstObject;
+        int i = 1;
+        NSMutableString *directionsText = [NSMutableString string];
+        for (MKRouteStep *step in route.steps) {
+            [directionsText appendFormat:@"%i. %@\n", i, step.instructions];
+            i++;
+        }
+        self.textView.text = directionsText;
+    }];
     
     
 }

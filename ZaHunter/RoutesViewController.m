@@ -11,6 +11,7 @@
 
 @interface RoutesViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property NSMutableArray *annotations;
 
 @end
 
@@ -18,10 +19,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.annotations = [NSMutableArray new];
     // Do any additional setup after loading the view.
     [self zoom];
     [self showPizzeriaAnnotation];
     [self.mapView addOverlay:self.pizzeria.route.polyline level:MKOverlayLevelAboveRoads];
+    //NSArray *annotations = [self.annotations copy];
+    //[self.mapView showAnnotations:annotations animated:YES];
+
  
 }
 
@@ -31,7 +36,20 @@
     annotation.coordinate = self.pizzeria.mapItem.placemark.location.coordinate;
     annotation.title = self.pizzeria.name;
     [self.mapView addAnnotation:annotation];
+    [self.annotations addObject:annotation];
+
+    MKPointAnnotation *userAnnotation = [MKPointAnnotation new];
+    userAnnotation.coordinate = [MKMapItem mapItemForCurrentLocation].placemark.coordinate;
+    [self.mapView addAnnotation:userAnnotation];
+    [self.annotations addObject:userAnnotation];
+
+    //[self.mapView showAnnotations:[self.mapView annotations] animated:YES];
 }
+
+
+
+
+
 
 -(void)zoom {
     [self.mapView setRegion:MKCoordinateRegionMake(self.pizzeria.mapItem.placemark.location.coordinate, MKCoordinateSpanMake(.05, .05)) animated:YES];
@@ -50,6 +68,8 @@
     return pin;
     
 }
+
+
 
 -(MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
     if ([overlay isKindOfClass:[MKPolyline class]]) {

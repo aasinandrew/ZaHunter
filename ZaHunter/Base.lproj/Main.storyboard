@@ -2,9 +2,10 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Igg-fa-Rol">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Pizza View Controller-->
+        <!--ZaHunter-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController automaticallyAdjustsScrollViewInsets="NO" id="BYZ-38-t0r" customClass="PizzaViewController" sceneMemberID="viewController">
@@ -47,7 +48,7 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="V0u-bs-n3x"/>
                                 </connections>
                             </tableView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Instructions" translatesAutoresizingMaskIntoConstraints="NO" id="jz0-ry-RpD">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jz0-ry-RpD">
                                 <rect key="frame" x="0.0" y="320" width="600" height="217"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -59,24 +60,26 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IiH-wd-31c">
                                 <rect key="frame" x="265" y="545" width="70" height="30"/>
                                 <state key="normal" title="Get Route">
+                                    <color key="titleColor" red="0.87417400280000002" green="0.4707196716" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="getRoutePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="w72-Dx-u6o"/>
                                 </connections>
                             </button>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="F2E-LG-7Mg">
-                                <rect key="frame" x="-9" y="0.0" width="621" height="600"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F2E-LG-7Mg">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <connections>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Ujf-az-JBx"/>
                                 </connections>
                             </mapView>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EBY-kH-s1m">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EBY-kH-s1m">
                                 <rect key="frame" x="31" y="547" width="83" height="29"/>
                                 <segments>
                                     <segment title="List"/>
                                     <segment title="Map"/>
                                 </segments>
+                                <color key="tintColor" red="0.87417400280000002" green="0.4707196716" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <action selector="listOrMapPressed:" destination="BYZ-38-t0r" eventType="valueChanged" id="V9C-vW-eeM"/>
                                 </connections>
@@ -86,17 +89,23 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="jz0-ry-RpD" secondAttribute="trailing" id="4Pz-8y-8pI"/>
                             <constraint firstItem="IiH-wd-31c" firstAttribute="top" secondItem="jz0-ry-RpD" secondAttribute="bottom" constant="8" id="4h0-4d-kBC"/>
+                            <constraint firstAttribute="trailing" secondItem="F2E-LG-7Mg" secondAttribute="trailing" id="5QU-Kr-Qpx"/>
                             <constraint firstItem="jz0-ry-RpD" firstAttribute="top" secondItem="p76-VO-81H" secondAttribute="bottom" constant="17" id="CYg-KU-CkB"/>
+                            <constraint firstItem="F2E-LG-7Mg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="HzS-cE-sY8"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="F2E-LG-7Mg" secondAttribute="bottom" id="SXM-Uq-UQX"/>
+                            <constraint firstItem="EBY-kH-s1m" firstAttribute="bottom" secondItem="IiH-wd-31c" secondAttribute="bottom" id="Yrk-Vb-FA9"/>
                             <constraint firstAttribute="centerX" secondItem="IiH-wd-31c" secondAttribute="centerX" id="a52-ul-l8n"/>
                             <constraint firstItem="p76-VO-81H" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="11" id="aZs-3M-uE6"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="IiH-wd-31c" secondAttribute="bottom" constant="25" id="cRD-Lz-64v"/>
+                            <constraint firstItem="EBY-kH-s1m" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="15" id="gAZ-Xa-PeE"/>
+                            <constraint firstItem="F2E-LG-7Mg" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="lxe-08-fGP"/>
                             <constraint firstItem="jz0-ry-RpD" firstAttribute="top" secondItem="p76-VO-81H" secondAttribute="bottom" constant="17" id="qE6-xL-ni5"/>
                             <constraint firstItem="p76-VO-81H" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="sje-L4-qkd"/>
                             <constraint firstItem="jz0-ry-RpD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="wO8-aT-xK3"/>
                             <constraint firstAttribute="trailing" secondItem="p76-VO-81H" secondAttribute="trailing" id="yBc-BR-6Lp"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="9vB-kq-viL">
+                    <navigationItem key="navigationItem" title="ZaHunter" id="9vB-kq-viL">
                         <barButtonItem key="leftBarButtonItem" style="plain" id="AIi-kQ-9F0">
                             <segmentedControl key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="7KN-8M-knP">
                                 <rect key="frame" x="27" y="34" width="91" height="29"/>
@@ -105,6 +114,7 @@
                                     <segment title="Walk"/>
                                     <segment title="Drive"/>
                                 </segments>
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <action selector="walkOrDrivePressed:" destination="BYZ-38-t0r" eventType="valueChanged" id="VXP-SM-74b"/>
                                 </connections>
@@ -136,7 +146,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mpK-Oj-2Yw">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mpK-Oj-2Yw">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <connections>
                                     <outlet property="delegate" destination="DVz-gD-yvt" id="5Wi-4I-rcw"/>
@@ -144,6 +154,12 @@
                             </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="mpK-Oj-2Yw" secondAttribute="trailing" id="8wU-b4-XK1"/>
+                            <constraint firstItem="owe-Vj-8zD" firstAttribute="top" secondItem="mpK-Oj-2Yw" secondAttribute="bottom" id="FKq-yo-c01"/>
+                            <constraint firstItem="mpK-Oj-2Yw" firstAttribute="leading" secondItem="aKJ-c8-r3b" secondAttribute="leading" id="Gm0-ea-bdC"/>
+                            <constraint firstItem="mpK-Oj-2Yw" firstAttribute="top" secondItem="aKJ-c8-r3b" secondAttribute="top" id="kIZ-0Q-wzq"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="mapView" destination="mpK-Oj-2Yw" id="VZY-2w-VBP"/>
@@ -161,6 +177,10 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="3dB-8R-aQ5">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.87417400284955016" green="0.47071967156950678" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
